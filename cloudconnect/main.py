@@ -1,4 +1,5 @@
 from application.resource_manager import ResourceManager
+from application.user_manager import UserManager
 from core.factory import AppResourceFactory
 from resources.app_service import AppService
 from resources.storage_account import StorageAccount
@@ -6,40 +7,90 @@ from resources.cache_db import CacheDB
 import os
 
 def cli_main():
-    """Main CLI entry point with improved UX."""
+    """Main CLI entry point with user authentication."""
+    user_manager = UserManager()
     manager = ResourceManager(factory=AppResourceFactory, use_decorator=True)
 
     print("\nWelcome to CloudConnect CLI")
     print("=" * 50)
-    
+
     while True:
         try:
-            _display_main_menu()
-            choice = input("\nEnter choice (1-7): ").strip()
+            if not user_manager.get_current_user():
+                _display_auth_menu()
+                choice = input("\nEnter choice (1-3): ").strip()
 
-            if choice == "1":
-                _create_resource_workflow(manager)
-            elif choice == "2":
-                _start_resource_workflow(manager)
-            elif choice == "3":
-                _stop_resource_workflow(manager)
-            elif choice == "4":
-                _delete_resource_workflow(manager)
-            elif choice == "5":
-                _view_logs()
-            elif choice == "6":
-                _list_resources_workflow(manager)
-            elif choice == "7":
-                print("\nExiting CloudConnect. Goodbye!")
-                break
+                if choice == "1":
+                    _signup_workflow(user_manager)
+                elif choice == "2":
+                    _login_workflow(user_manager)
+                elif choice == "3":
+                    print("\nExiting CloudConnect. Goodbye!")
+                    break
+                else:
+                    print("Invalid choice. Please select 1-3.")
             else:
-                print("Invalid choice. Please select 1-7.")
-                
+                _display_main_menu()
+                choice = input("\nEnter choice (1-8): ").strip()
+
+                if choice == "1":
+                    _create_resource_workflow(manager)
+                elif choice == "2":
+                    _start_resource_workflow(manager)
+                elif choice == "3":
+                    _stop_resource_workflow(manager)
+                elif choice == "4":
+                    _delete_resource_workflow(manager)
+                elif choice == "5":
+                    _view_logs()
+                elif choice == "6":
+                    _list_resources_workflow(manager)
+                elif choice == "7":
+                    print(user_manager.logout())
+                elif choice == "8":
+                    print("\nExiting CloudConnect. Goodbye!")
+                    break
+                else:
+                    print("Invalid choice. Please select 1-8.")
+
         except KeyboardInterrupt:
             print("\n\nExiting CloudConnect. Goodbye!")
             break
         except Exception as e:
             print(f"Error: {e}")
+
+def _display_auth_menu():
+    """Display the authentication menu."""
+    print("\n" + "=" * 50)
+    print("Authentication Menu:")
+    print("-" * 20)
+    print("1. Signup")
+    print("2. Login")
+    print("3. Exit")
+
+def _signup_workflow(user_manager):
+    """Handle user signup."""
+    print("\nSignup")
+    print("-" * 10)
+    username = input("Enter username: ").strip()
+    name = input("Enter name: ").strip()
+    email = input("Enter email: ").strip()
+    password = input("Enter password: ").strip()
+    try:
+        print(user_manager.signup(username, name, email, password))
+    except Exception as e:
+        print(f"Signup failed: {e}")
+
+def _login_workflow(user_manager):
+    """Handle user login."""
+    print("\nLogin")
+    print("-" * 10)
+    username = input("Enter username: ").strip()
+    password = input("Enter password: ").strip()
+    try:
+        print(user_manager.login(username, password))
+    except Exception as e:
+        print(f"Login failed: {e}")
 
 def _display_main_menu():
     """Display the main menu with better formatting."""
@@ -52,7 +103,8 @@ def _display_main_menu():
     print("4. Delete Resource")
     print("5. View Logs")
     print("6. List Resources")
-    print("7. Exit")
+    print("7. Logout")
+    print("8. Exit")
 
 def _create_resource_workflow(manager):
     """Improved resource creation workflow."""

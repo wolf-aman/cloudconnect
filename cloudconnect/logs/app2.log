@@ -1,1 +1,2 @@
 [2025-11-12 02:41:18 PM] Failed to create AppService 'app2': Invalid runtime.
+[2025-11-13 10:48:45 AM] AppService 'app2' created with config {'runtime': 'python', 'region': 'EastUS', 'replica_count': 1}
