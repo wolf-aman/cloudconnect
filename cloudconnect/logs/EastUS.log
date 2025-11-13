@@ -1,0 +1,2 @@
+[2025-11-12 02:41:47 PM] AppService 'EastUS' created with config {'runtime': 'python', 'region': 'EastUS', 'replica_count': 1}
+[2025-11-12 02:42:43 PM] AppService 'EastUS' deleted - EastUS deleted.

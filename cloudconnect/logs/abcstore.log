@@ -1,0 +1,4 @@
+[2025-11-12 02:26:16 PM] StorageAccount 'abcstore' created with config {'encryption_enabled': False, 'access_key': '8171307841', 'max_size_gb': 5}
+[2025-11-12 02:27:14 PM] StorageAccount 'abcstore' started - abcstore started.
+[2025-11-12 02:35:47 PM] StorageAccount 'abcstore' created with config {'encryption_enabled': False, 'access_key': '123435678', 'max_size_gb': 2}
+[2025-11-12 02:35:55 PM] StorageAccount 'abcstore' started - abcstore started.
