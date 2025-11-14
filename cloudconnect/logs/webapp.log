@@ -1,0 +1,4 @@
+[2025-11-14 09:13:22 AM] AppService 'webapp' created with config {'runtime': 'python', 'region': 'EastUS', 'replica_count': 1}
+[2025-11-14 09:16:50 AM] AppService 'webapp' created with config {'runtime': 'python', 'region': 'EastUS', 'replica_count': 1}
+[2025-11-14 09:17:19 AM] AppService 'webapp' started - webapp started.
+[2025-11-14 09:17:36 AM] AppService 'webapp' stopped - webapp stopped.

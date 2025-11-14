@@ -1,6 +1,6 @@
 from application.resource_manager import ResourceManager
 from application.user_manager import UserManager
-from core.factory import AppResourceFactory
+from core.factory import AppResourceFactory, DatabaseResourceFactory, StorageResourceFactory, CacheResourceFactory
 from resources.app_service import AppService
 from resources.storage_account import StorageAccount
 from resources.cache_db import CacheDB
@@ -9,7 +9,18 @@ import os
 def cli_main():
     """Main CLI entry point with user authentication."""
     user_manager = UserManager()
-    manager = ResourceManager(factory=AppResourceFactory, use_decorator=True)
+    
+    # Create a unified resource manager that can handle all resource types
+    unified_manager = ResourceManager(factory=AppResourceFactory, use_decorator=True)
+    
+    # Create specialized managers that share the same resource storage
+    app_manager = unified_manager
+    storage_manager = ResourceManager(factory=StorageResourceFactory, use_decorator=True)
+    cache_manager = ResourceManager(factory=CacheResourceFactory, use_decorator=True)
+    
+    # Share the same resource storage across all managers
+    storage_manager._resources = unified_manager._resources
+    cache_manager._resources = unified_manager._resources
 
     print("\nWelcome to CloudConnect CLI")
     print("=" * 50)
@@ -34,17 +45,17 @@ def cli_main():
                 choice = input("\nEnter choice (1-8): ").strip()
 
                 if choice == "1":
-                    _create_resource_workflow(manager)
+                    _create_resource_workflow(app_manager, storage_manager, cache_manager)
                 elif choice == "2":
-                    _start_resource_workflow(manager)
+                    _start_resource_workflow(unified_manager)
                 elif choice == "3":
-                    _stop_resource_workflow(manager)
+                    _stop_resource_workflow(unified_manager)
                 elif choice == "4":
-                    _delete_resource_workflow(manager)
+                    _delete_resource_workflow(unified_manager)
                 elif choice == "5":
                     _view_logs()
                 elif choice == "6":
-                    _list_resources_workflow(manager)
+                    _list_resources_workflow(unified_manager)
                 elif choice == "7":
                     print(user_manager.logout())
                 elif choice == "8":
@@ -106,7 +117,7 @@ def _display_main_menu():
     print("7. Logout")
     print("8. Exit")
 
-def _create_resource_workflow(manager):
+def _create_resource_workflow(app_manager, storage_manager, cache_manager):
     """Improved resource creation workflow."""
     print("\nCreate New Resource")
     print("-" * 25)
@@ -114,30 +125,30 @@ def _create_resource_workflow(manager):
     print("1. AppService (Web Applications)")
     print("2. StorageAccount (Data Storage)")
     print("3. CacheDB (Fast Data Access)")
-    
+
     choice = input("Enter choice (1-3): ").strip()
-    
+
     if choice not in ["1", "2", "3"]:
         print("Invalid choice. Please select 1, 2, or 3.")
         return
-    
+
     name = _get_resource_name()
     if not name:
         return
-    
+
     try:
         if choice == "1":
             config = _config_app_service()
-            result = manager.create_resource("AppService", name, config)
+            result = app_manager.create_resource("AppService", name, config)
         elif choice == "2":
             config = _config_storage_account()
-            result = manager.create_resource("StorageAccount", name, config)
+            result = storage_manager.create_resource("StorageAccount", name, config)
         elif choice == "3":
             config = _config_cache_db()
-            result = manager.create_resource("CacheDB", name, config)
-        
+            result = cache_manager.create_resource("CacheDB", name, config)
+
         print(f"\n{result}")
-        
+
     except Exception as e:
         print(f"Creation failed: {e}")
 

@@ -1,0 +1,4 @@
+[2025-11-13 11:32:06 AM] AppService 'appp3' created with config {'runtime': 'python', 'region': 'EastUS', 'replica_count': 1}
+[2025-11-13 11:33:06 AM] AppService 'appp3' started - appp3 started.
+[2025-11-13 11:33:14 AM] AppService 'appp3' stopped - appp3 stopped.
+[2025-11-13 11:33:54 AM] AppService 'appp3' deleted - appp3 deleted.
